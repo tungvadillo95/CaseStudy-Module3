@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using VATUClothesShop.Models;
+using VATUClothesShop.Models.Repository;
 
 namespace VATUClothesShop
 {
@@ -25,6 +28,9 @@ namespace VATUClothesShop
         {
             services.AddControllersWithViews();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddDbContext<VATUShopDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("VATUShopBdConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,14 +50,14 @@ namespace VATUClothesShop
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Product}/{action=Create}/{id?}");
             });
         }
     }
