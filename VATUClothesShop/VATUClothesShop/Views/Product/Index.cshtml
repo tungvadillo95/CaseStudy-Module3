@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewBag.Title = "Product List";
+}
+<div class="row justify-content-center">
+        @foreach (var product in Model)
+        {
+            var imagePath = $"/img/{(product.ImagePath ?? "none-avatar.png")}";
+            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.ProductId" style="text-decoration: none;">
+                <div class="col-3">
+                    <div class="m-1">
+                        <img src="@imagePath" class="card-img-top myImage" asp-append-version="true" style="width:300px; height: 300px;" />
+                        <div class="card-header" style="width:300px;">
+                            <b style="text-align: left;">@product.ProductName</b>
+                            <p style="text-align: left;">Giá: @product.Price</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        }
+</div>
