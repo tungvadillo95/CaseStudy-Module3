@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using VATUClothesShop.Models;
-using VATUClothesShop.Models.Repository;
+using VATUClothesShop.Repository;
 
 namespace VATUClothesShop
 {
@@ -28,7 +28,11 @@ namespace VATUClothesShop
         {
             services.AddControllersWithViews();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICatergoryRepository, CatergoryRepository>();
+            services.AddScoped<IBrandRepository, BrandRepository>();
+
             services.AddDbContext<VATUShopDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("VATUShopBdConnection")));
         }

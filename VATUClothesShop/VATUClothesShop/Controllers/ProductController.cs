@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using VATUClothesShop.Models;
-using VATUClothesShop.Models.Repository;
+using VATUClothesShop.Repository;
 using VATUClothesShop.ViewModels;
 
 namespace VATUClothesShop.Controllers
@@ -14,13 +14,19 @@ namespace VATUClothesShop.Controllers
     public class ProductController : Controller
     {
         private readonly IProductRepository productRepository;
+        private readonly ICatergoryRepository catergoryRepository;
+        private readonly IBrandRepository brandRepository;
         private readonly IWebHostEnvironment webHostEnvironment;
 
         public ProductController(IProductRepository productRepository,
+                               ICatergoryRepository catergoryRepository,
+                               IBrandRepository brandRepository,
                                IWebHostEnvironment webHostEnvironment)
         {
             this.productRepository = productRepository;
-            this.webHostEnvironment = webHostEnvironment;
+            this.catergoryRepository = catergoryRepository;
+            this.brandRepository = brandRepository;
+             this.webHostEnvironment = webHostEnvironment;
         }
         public IActionResult Index()
         {
@@ -34,11 +40,11 @@ namespace VATUClothesShop.Controllers
             return View(detailView);
         }
         [HttpGet]
-        public ViewResult Create()
+        public IActionResult Create()
         {
             var model = new CreateProductViewModel();
-            model.Categories = productRepository.GetCategories();
-            model.Brands = productRepository.GetBrands();
+            model.Categories = catergoryRepository.GetCategories();
+            model.Brands = brandRepository.GetBrands();
             return View(model);
         }
         [HttpPost]
@@ -46,30 +52,36 @@ namespace VATUClothesShop.Controllers
         {
             if (ModelState.IsValid)
             {
-                string fileName = null;
-                if(model.Image != null)
-                {
-                    string uploadFolder = Path.Combine(webHostEnvironment.WebRootPath, "img");
-                    fileName = $"{Guid.NewGuid()}_{model.Image.FileName}";
-                    var filePath = Path.Combine(uploadFolder, fileName);
-                    using (var fs = new FileStream(filePath, FileMode.Create))
-                    {
-                        model.Image.CopyTo(fs);
-                    }
-                }
-                var product = new Product()
-                {
-                    ProductName = model.ProductName,
-                    CategoryId = model.CategoryId,
-                    BrandingId = model.BrandingId,
-                    Price = model.Price,
-                    Inventory = model.Inventory,
-                    Description = model.Description,
-                    ImagePath = fileName
-                };
+                var product = productRepository.ConvertProductViewModel(model);
                 if (productRepository.CreateProduct(product) > 0)
                 {
                     return RedirectToAction("Index","Product");
+                }
+            }
+            return View();
+        }
+        public IActionResult Edit(int Id)
+        {
+            var product = productRepository.Get(Id);
+            if (product == null)
+            {
+                return View("~/Views/Errors/ProductNotFound.cshtml", Id);
+            }
+            var productEdit = productRepository.ConvertEditProductViewModel(product);
+            productEdit.ProductId = Id;
+            productEdit.Brands = brandRepository.GetBrands();
+            productEdit.Categories = catergoryRepository.GetCategories();
+            return View(productEdit);
+        }
+        [HttpPost]
+        public IActionResult Edit(EditProductViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var editProduct = productRepository.EditProduct(model);
+                if (editProduct != null)
+                {
+                    return RedirectToAction("Index", "Product");
                 }
             }
             return View();

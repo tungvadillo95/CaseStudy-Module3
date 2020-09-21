@@ -41,7 +41,7 @@ namespace VATUClothesShop.ViewModels
         public string Description { get; set; }
         [Required(ErrorMessage = "Bạn chưa chọn hình ảnh sản phẩm")]
         public IFormFile Image { get; set; }
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string ImagePath { get; set; }
     }
 }

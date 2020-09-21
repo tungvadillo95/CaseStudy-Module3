@@ -27,7 +27,7 @@ namespace VATUClothesShop.Models
         [MaxLength(2000)]
         public string Description { get; set; }
         [Required]
-        [MaxLength(50)]
+        [MaxLength(100)]
         public string ImagePath { get; set; }
     }
 }

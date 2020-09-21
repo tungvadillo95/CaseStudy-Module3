@@ -7,19 +7,20 @@
 <h3 class="text-center">@Model.ProductName</h3>
 <div class="row col-10 justify-content-center">
     <div class="col-5">
-        <img src="@imagePath" class="m-2" />
+        <img src="@imagePath" class="m-2" style="width: 400px; height: 450px;"/>
     </div>
     <div class="col-5 m-2">
         <div class="card">
             <div class="card-body">
-                <p>Mô tả: @Model.Description</p>
-                <p>Loại: @Model.CategoryName</p>
-                <p>Thương hiệu: @Model.BrandingName</p>
-                <p>Giá: @Model.Price</p>
-                <p>Số lượng: <input asp-for="Inventory" value="" /></p>
+                <p><b>Mô tả:</b> @Model.Description</p>
+                <p><b>Loại:</b> @Model.CategoryName</p>
+                <p><b>Thương hiệu:</b> @Model.BrandingName</p>
+                <p><b>Giá:</b> @Model.Price</p>
+                <p><b>Số lượng:</b> <input asp-for="Inventory" value="" /></p>
                 <span asp-validation-for="Inventory"></span>
             </div>
             <div class="card-footer text-center">
+                <a asp-controller="Product" asp-action="Edit"  asp-route-id="@Model.ProductId" class="btn btn-secondary">Edit</a>
                 <a asp-controller="Home" asp-action="Index" class="btn btn-warning">Back</a>
             </div>
         </div>
