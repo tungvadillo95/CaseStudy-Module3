@@ -13,6 +13,7 @@ namespace VATUClothesShop.Models
         [Required]
         [MaxLength(100)]
         public string BrandName { get; set; }
+        public bool IsDelete { get; set; }
         public ICollection<Product> Products { get; set; }
     }
 }

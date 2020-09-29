@@ -13,7 +13,8 @@ namespace VATUClothesShop.Models
         public int ShoppingCartId { get; set; }
         public ICollection<ShoppingCartDetail> ShoppingCartDetails { get; set; }
         [ForeignKey("AspNetUsers")]
-        public int AccountCustomerId { get; set; }
-        public AccountCustomer AccountCustomer { get; set; }
+        public string AccountCustomerId { get; set; }
+        public ApplicationUser AccountCustomer { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

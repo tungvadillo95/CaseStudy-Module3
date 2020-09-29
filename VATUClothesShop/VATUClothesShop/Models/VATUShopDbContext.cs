@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VATUClothesShop.Models
 {
-    public class VATUShopDbContext : IdentityDbContext<AccountCustomer>
+    public class VATUShopDbContext : IdentityDbContext<ApplicationUser>
     {
         public VATUShopDbContext(DbContextOptions<VATUShopDbContext> options) : base(options)
         {
@@ -30,6 +30,16 @@ namespace VATUClothesShop.Models
             //modelBuilder.Ignore<Product>();
             //modelBuilder.Ignore<ShoppingCart>();
             //modelBuilder.Ignore<ShoppingCartDetail>();
+
+            modelBuilder.Entity<Order>()
+            .HasOne<ApplicationUser>(o => o.AccountCustomer)
+            .WithMany(a => a.Orders)
+            .HasForeignKey(o => o.AccountCustomerId);
+
+            modelBuilder.Entity<ShoppingCart>()
+            .HasOne<ApplicationUser>(sh => sh.AccountCustomer)
+            .WithMany(a => a.ShoppingCarts)
+            .HasForeignKey(sh => sh.AccountCustomerId);
         }
     }
 }

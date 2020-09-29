@@ -1,4 +1,4 @@
-﻿@model EditProductViewModel
+﻿    @model EditProductViewModel
 @{
     ViewBag.Title = "Edit Product";
     var imagePath = $"/img/{(Model.ImagePath ?? "none-avatar.png")}";
@@ -23,9 +23,8 @@
 }
 <h2 class="text-center text-warning my-4">SỬA SẢN PHẨM</h2>
 <form enctype="multipart/form-data" asp-controller="Product" asp-action="Edit" method="post" class="mt-2">
-    <div asp-validation-summary="All"></div>\
     <input hidden asp-for="ProductId" />
-    <input hidden asp-for="Image" />
+    <input hidden asp-for="ImagePath" />
     <div class="row col-xl-12">
         <div class="col-xl-8 col-md-12">
             <div style="padding-left: 50px;">
@@ -34,7 +33,7 @@
                         <label asp-for="ProductName"></label>
                     </div>
                     <div class="col-sm-10">
-                        <input asp-for="ProductName" class="form-control" />
+                        <input placeholder="From Nhân Chăn Rau with Love <3" asp-for="ProductName" class="form-control" />
                         <span asp-validation-for="ProductName" class="text-danger"></span>
                     </div>
                 </div>
@@ -69,7 +68,7 @@
                         <label asp-for="Price"></label>
                     </div>
                     <div class="col-sm-10">
-                        <input asp-for="Price" class="form-control" style="width: 50%;" />
+                        <input placeholder="From Nhân Chăn Rau with Love <3" asp-for="Price" class="form-control" style="width: 50%;" />
                         <span asp-validation-for="Price" class="text-danger"></span>
                     </div>
                 </div>
@@ -111,8 +110,8 @@
     </div>
     <div class="row form-group text-center">
         <div class="col-sm-12">
-            <button type="submit" class="btn btn-primary">Update</button>
-            <a asp-controller="Product" asp-action="Index" class="btn btn-warning">Back</a>
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+            <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.ProductId" class="btn btn-warning">Hủy</a>
         </div>
     </div>
 </form>

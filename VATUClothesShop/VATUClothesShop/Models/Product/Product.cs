@@ -17,7 +17,7 @@ namespace VATUClothesShop.Models
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         [Required]
-        public int BrandingId { get; set; }
+        public int BrandId { get; set; }
         public Brand Brand { get; set; }
         [Required]
         public float Price { get; set; }
@@ -29,5 +29,6 @@ namespace VATUClothesShop.Models
         [Required]
         [MaxLength(100)]
         public string ImagePath { get; set; }
+        public bool IsDelete { get; set; }
     }
 }

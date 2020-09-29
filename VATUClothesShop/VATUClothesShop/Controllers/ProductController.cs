@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using VATUClothesShop.Models;
@@ -11,32 +12,32 @@ using VATUClothesShop.ViewModels;
 
 namespace VATUClothesShop.Controllers
 {
+    [Authorize(Roles = "System Admin")]
     public class ProductController : Controller
     {
         private readonly IProductRepository productRepository;
         private readonly ICatergoryRepository catergoryRepository;
         private readonly IBrandRepository brandRepository;
-        private readonly IWebHostEnvironment webHostEnvironment;
 
         public ProductController(IProductRepository productRepository,
                                ICatergoryRepository catergoryRepository,
-                               IBrandRepository brandRepository,
-                               IWebHostEnvironment webHostEnvironment)
+                               IBrandRepository brandRepository)
         {
             this.productRepository = productRepository;
             this.catergoryRepository = catergoryRepository;
             this.brandRepository = brandRepository;
-             this.webHostEnvironment = webHostEnvironment;
         }
         public IActionResult Index()
         {
             var products = productRepository.GetProducts();
             return View(products);
         }
+
+        [AllowAnonymous]
         [Route("Product/Details/{productId}")]
         public ViewResult Details(int productId)
         {
-            var detailView = productRepository.Get(productId);
+            var detailView = productRepository.GetProduct(productId);
             return View(detailView);
         }
         [HttpGet]
@@ -62,7 +63,7 @@ namespace VATUClothesShop.Controllers
         }
         public IActionResult Edit(int Id)
         {
-            var product = productRepository.Get(Id);
+            var product = productRepository.GetProduct(Id);
             if (product == null)
             {
                 return View("~/Views/Errors/ProductNotFound.cshtml", Id);
@@ -81,10 +82,20 @@ namespace VATUClothesShop.Controllers
                 var editProduct = productRepository.EditProduct(model);
                 if (editProduct != null)
                 {
-                    return RedirectToAction("Index", "Product");
+                    return Redirect($"~/Product/Details/{editProduct.ProductId}");
                 }
             }
             return View();
+        }
+
+        [Route("/Product/Delete/{productId}")]
+        public IActionResult Delete(int productId)
+        {
+            if (productRepository.Delete(productId))
+            {
+                return Ok(true);
+            }
+            return Ok(false);
         }
     }
 }

@@ -1,0 +1,67 @@
+﻿@inject VATUShopDbContext vATUShopDbContext
+@model OrderViewModel
+@{
+    ViewBag.Title = "Order " + Model.OrderId;
+}
+
+<h2 class="text-center text-primary">CHI TIẾT ĐƠN HÀNG</h2>
+<h2 class="text-center text-success">@TempData["Message"]</h2>
+<div class="row justify-content-center">
+    <div class="m-2">
+        @if (Model.IsNormalOrder)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <p><b>Tên khách hàng: </b> @Model.NormalOrderCustomerName</p>
+                    <p><b>Số điện thoại: </b> @Model.NormalOrderPhone</p>
+                    <p><b>Địa chỉ: </b> @Model.NormalOrderAddress</p>
+                    <p><b>Ngày tạo đơn: </b> @Model.DateCreated.ToString("dd/MM/yyyy-hh:mm tt")</p>
+                    <p><b>Trạng thái: </b> @(Model.Status?"Đã thanh toán":"Chưa thanh toán")</p>
+                    <p><b>Tên loại hàng: </b>@vATUShopDbContext.Products.Where(p => p.ProductId == Model.ProductId).FirstOrDefault().ProductName</p>
+                    <p><b>Số lượng: </b>@Model.Quantity</p>
+                    <p><b>Đơn giá: </b>@vATUShopDbContext.Products.Where(p => p.ProductId == Model.ProductId).FirstOrDefault().Price.ToString("#,##0") ₫</p>
+                    <p><b>Tổng giá trị đơn hàng: </b>@((Model.Quantity * vATUShopDbContext.Products.Where(p => p.ProductId == Model.ProductId).FirstOrDefault().Price).ToString("#,##0")) ₫</p>
+                </div>
+                <div class="card-footer text-center">
+                    <a asp-controller="Admin" asp-action="EditNormalOrder" asp-route-id="@Model.OrderId" class="btn btn-secondary">Sửa</a>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteOrderModal">
+                        Xóa
+                    </button>
+                    <a asp-controller="Admin" asp-action="ShowOrders" class="btn btn-success">Quay lại</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal" id="deleteOrderModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="Admin" asp-action="DeleteOrder" asp-route-id="@Model.OrderId" method="post">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Xác nhận xóa đơn hàng</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    Bạn có chắc muốn xóa đơn hàng này?
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">
+                        Có
+                    </button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Không</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@*@section Scripts
+{
+    <script src="~/js/admin_order_detail.js" asp-append-version="true"></script>
+}*@

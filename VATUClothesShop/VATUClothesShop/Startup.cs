@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,9 +33,16 @@ namespace VATUClothesShop
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICatergoryRepository, CatergoryRepository>();
             services.AddScoped<IBrandRepository, BrandRepository>();
+            services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+            services.AddScoped<IOderRepository, OrderRepository>();
 
             services.AddDbContext<VATUShopDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("VATUShopBdConnection")));
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<VATUShopDbContext>();
+            services.AddSession(options =>
+            {
+                options.Cookie.IsEssential = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,16 +60,16 @@ namespace VATUClothesShop
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-            app.UseRouting();
             app.UseAuthentication();
+            app.UseSession();
+            app.UseRouting();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Product}/{action=Create}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

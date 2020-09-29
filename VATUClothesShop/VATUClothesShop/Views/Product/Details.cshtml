@@ -1,28 +1,115 @@
-﻿@model DetailProductViewModel
+﻿@inject SignInManager<ApplicationUser> signInManager
+@model DetailProductViewModel
 @{
     ViewBag.Title = Model.ProductName;
     var imagePath = $"/img/{(Model.ImagePath ?? "none-avatar.png")}";
 }
 
+<h2 class="text-center text-success">@TempData["Message"]</h2>
 <h3 class="text-center">@Model.ProductName</h3>
 <div class="row col-10 justify-content-center">
     <div class="col-5">
-        <img src="@imagePath" class="m-2" style="width: 400px; height: 450px;"/>
+        <img src="@imagePath" class="m-2" style="width: 400px; height: 450px;" />
     </div>
     <div class="col-5 m-2">
         <div class="card">
-            <div class="card-body">
+            <div class="card-body">     
                 <p><b>Mô tả:</b> @Model.Description</p>
                 <p><b>Loại:</b> @Model.CategoryName</p>
                 <p><b>Thương hiệu:</b> @Model.BrandingName</p>
-                <p><b>Giá:</b> @Model.Price</p>
-                <p><b>Số lượng:</b> <input asp-for="Inventory" value="" /></p>
-                <span asp-validation-for="Inventory"></span>
+                <p><b>Giá:</b> @Model.Price.ToString("#,##0") ₫</p>
             </div>
             <div class="card-footer text-center">
-                <a asp-controller="Product" asp-action="Edit"  asp-route-id="@Model.ProductId" class="btn btn-secondary">Edit</a>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-warning">Back</a>
+                @if (signInManager.IsSignedIn(User))
+                {
+                    if (User.IsInRole("System Admin"))
+                    {
+                        <a asp-controller="Product" asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-secondary">Sửa</a>
+                        <a href="javascript:void(0)" class="btn btn-danger" onclick="products.delete(@Model.ProductId)">Xóa</a>
+                        <a asp-controller="Product" asp-action="Index" class="btn btn-success">Trang chủ</a>
+                    }
+                }
+                else
+                {
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#orderModal">
+                        Mua ngay
+                    </button>
+                    <a asp-controller="ShoppingCart" asp-action="AddCart" asp-route-id="@Model.ProductId" class="btn btn-primary" style="width: 170px; ">Thêm vào giỏ hàng</a>
+                }
             </div>
         </div>
     </div>
 </div>
+
+<!-- The Modal Order-->
+<div class="modal" id="orderModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-controller="Admin" asp-action="CreateNormalOrder" method="post">
+                <input type="hidden" value="@Model.Price" id="PriceProduct" />
+                <input asp-for="ProductId" value="@Model.ProductId" hidden />
+                <!--   Modal Header-->
+                <div class="modal-header">
+                    <h4 class="modal-title text-success">THÔNG TIN KHÁCH HÀNG</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!--   Modal Body-->
+                <div class="modal-body">
+                    <h5>Tên sản phẩm: <b class="text-primary">@Model.ProductName</b></h5>
+                    <h5>Giá: <b class="text-primary">@Model.Price.ToString("#,##0") ₫</b></h5>
+                    <p class="text-warning"> Vui lòng điền đầy đủ các thông tin sau để đặt hàng!</p>
+                    <hr />
+                    <div class="form-group">
+                        <label asp-for="NormalOrderCustomerName"></label>
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="NormalOrderCustomerName" placeholder="From Nhân Chăn Rau with Love <3" class="form-control" />
+                        <span asp-validation-for="NormalOrderCustomerName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NormalOrderPhone"></label>
+                    </div>
+                    <div class="form-group">
+                        <input placeholder="From Nhân Chăn Rau with Love <3"  asp-for="NormalOrderPhone" class="form-control" />
+                        <span asp-validation-for="NormalOrderPhone" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NormalOrderAddress"></label>
+                    </div>
+                    <div class="form-group">
+                        <input placeholder="From Nhân Chăn Rau with Love <3"  asp-for="NormalOrderAddress" class="form-control" />
+                        <span asp-validation-for="NormalOrderAddress" class="text-danger"></span>
+                    </div>
+                    <div class=" col form-group row">
+                        <label asp-for="Quantity">Số lượng</label>
+                        @*<span class="text-center minus" onclick="del();"> &nbsp;&nbsp;<i class=" fa fa-minus" aria-hidden="true"></i>&nbsp;&nbsp;</span>*@
+                        <input asp-for="Quantity" autocomplete="off" class="form-control" oninput="plus()" onchange="plus()" value="1" min="1" style="height:25px; width:80px; text-align: center" id="Quantity">
+                        @*<span class="text-center plus" onclick="plus();"> &nbsp;&nbsp;<i class="fa fa-plus" aria-hidden="true"></i></span>*@
+                        <span asp-validation-for="Quantity" class="text-danger"></span>
+                    </div>
+                    <hr />
+                    <h5>Tổng giá trị đơn hàng: <b class="text-primary" id="Total">@Model.Price.ToString("#,##0") ₫</b></h5>
+                </div>
+                <!--   Modal Footer-->
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        Đặt hàng
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        var i = 1;
+        function plus() {
+            $("#Total").html((parseInt($("#Quantity").val(), 10) * parseFloat($("#PriceProduct").val(), 10)).toLocaleString('vi', { style: 'currency', currency: 'VND' }));
+        }
+    </script>
+    <script src="~/lib/bootbox.js/bootbox.min.js"></script>
+    <script src="~/js/product.js"></script>
+}

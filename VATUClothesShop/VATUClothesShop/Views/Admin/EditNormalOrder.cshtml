@@ -1,0 +1,90 @@
+﻿@model OrderViewModel
+@{
+    ViewBag.Title = "Edit Order";
+    string productName = "";
+    foreach (var item in Model.Products)
+    {
+        if (item.ProductId == Model.ProductId)
+        {
+            productName = item.ProductName;
+            break;
+        }
+    }
+}
+<h2 class="text-center text-warning my-4">SỬA ĐƠN HÀNG</h2>
+<form enctype="multipart/form-data" asp-controller="Admin" asp-action="EditNormalOrder" method="post" class="mt-2">
+    <input hidden asp-for="OrderId" />
+    <div class="col-xl-12">
+        <div class="row form-group">
+            <div class="col-sm-3">
+                <label asp-for="OrderId"></label>
+            </div>
+            <div class="col-sm-9">
+                <p>@Model.OrderId</p>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-sm-3">
+                <label asp-for="DateCreated"></label>
+            </div>
+            <div class="col-sm-9">
+                <p>@Model.DateCreated.ToString("dd/MM/yyyy-hh:mm tt")</p>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-sm-3">
+                <label asp-for="NormalOrderCustomerName"></label>
+            </div>
+            <div class="col-sm-9">
+                <input asp-for="NormalOrderCustomerName" class="form-control" style="width: 50%;" />
+                <span asp-validation-for="NormalOrderCustomerName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-sm-3">
+                <label asp-for="NormalOrderPhone"></label>
+            </div>
+            <div class="col-sm-9">
+                <input asp-for="NormalOrderPhone" class="form-control" style="width: 50%;" />
+                <span asp-validation-for="NormalOrderPhone" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-sm-3">
+                <label asp-for="NormalOrderAddress"></label>
+            </div>
+            <div class="col-sm-9">
+                <input asp-for="NormalOrderAddress" class="form-control" style="width: 50%;" />
+                <span asp-validation-for="NormalOrderAddress" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-sm-3">
+                <label asp-for="ProductId"></label>
+            </div>
+            <div class="col-sm-9">
+                <select asp-for="ProductId" asp-items="@(new SelectList(Model.Products, "ProductId", "ProductName"))" class="custom-select" style="width:20%">
+                    <option selected value="@Model.ProductId" class="text-center">
+                        @productName
+                    </option>
+                </select>
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-sm-3">
+                <label asp-for="Quantity"></label>
+            </div>
+            <div class="col-sm-9">
+                <input asp-for="Quantity" class="form-control" style="width: 50%;" min="1" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row form-group text-center">
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+            <a asp-controller="Admin" asp-action="DetailsOrder" asp-route-id="@Model.OrderId" class="btn btn-warning">Hủy</a>
+        </div>
+    </div>
+</form>

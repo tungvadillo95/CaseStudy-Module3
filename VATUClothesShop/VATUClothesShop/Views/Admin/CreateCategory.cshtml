@@ -1,0 +1,26 @@
+﻿@model CatergoryViewModel
+@{
+    ViewBag.Title = "Create Catergory";
+}
+<h2 class="text-center text-success">THÊM LOẠI HÀNG</h2>
+<form enctype="multipart/form-data" asp-controller="Admin" asp-action="CreateCategory" method="post" class="mt-2">
+    <div class="col-xl-12">
+        <div style="padding-left: 50px;">
+            <div class="row form-group">
+                <div class="col-sm-2">
+                    <label asp-for="CategoryName"></label>
+                </div>
+                <div class="col-sm-5">
+                    <input asp-for="CategoryName" class="form-control" />
+                    <span asp-validation-for="CategoryName" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row form-group text-left">
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary">Tạo</button>
+                <a asp-controller="Admin" asp-action="ShowCatergories" class="btn btn-warning">Hủy</a>
+            </div>
+        </div>
+    </div>
+</form>

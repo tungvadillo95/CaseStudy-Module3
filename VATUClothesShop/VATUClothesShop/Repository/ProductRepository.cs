@@ -28,18 +28,34 @@ namespace VATUClothesShop.Repository
             return vATUShopDbContext.SaveChanges();
         }
 
-        public IEnumerable<Product> GetProducts()
+        public IEnumerable<DetailProductViewModel> GetProducts()
         {
-            return vATUShopDbContext.Products;
+            IEnumerable<DetailProductViewModel> products = new List<DetailProductViewModel>();
+            products = (from p in vATUShopDbContext.Products
+                        join c in vATUShopDbContext.Categories on p.CategoryId equals c.CategoryId
+                        join b in vATUShopDbContext.Brands on p.BrandId equals b.BrandId
+                        select (new DetailProductViewModel()
+                        {
+                            ProductId = p.ProductId,
+                            ProductName = p.ProductName,
+                            CategoryName = c.CategoryName,
+                            BrandingName = b.BrandName,
+                            Price = p.Price,
+                            Inventory = p.Inventory,
+                            Description = p.Description,
+                            ImagePath = p.ImagePath,
+                            IsDelete = p.IsDelete
+                        }));
+            return products;
         }
 
-        public DetailProductViewModel Get(int productId)
+        public DetailProductViewModel GetProduct(int productId)
         {
             var data = (from p in vATUShopDbContext.Products
                         join c in vATUShopDbContext.Categories
                         on p.CategoryId equals c.CategoryId
                         join b in vATUShopDbContext.Brands
-                        on p.BrandingId equals b.BrandId
+                        on p.BrandId equals b.BrandId
                         where p.ProductId == productId
                         select new DetailProductViewModel()
                         {
@@ -51,6 +67,7 @@ namespace VATUClothesShop.Repository
                             BrandingId = b.BrandId,
                             Price = p.Price,
                             Description = p.Description,
+                            Inventory = p.Inventory,
                             ImagePath = p.ImagePath
                         }).FirstOrDefault();
             return data;
@@ -73,7 +90,7 @@ namespace VATUClothesShop.Repository
             {
                 ProductName = model.ProductName,
                 CategoryId = model.CategoryId,
-                BrandingId = model.BrandingId,
+                BrandId = model.BrandingId,
                 Price = model.Price,
                 Inventory = model.Inventory,
                 Description = model.Description,
@@ -90,6 +107,7 @@ namespace VATUClothesShop.Repository
                 BrandingId = model.BrandingId,
                 CategoryId = model.CategoryId,
                 Price = model.Price,
+                Inventory = model.Inventory,
                 Description = model.Description,
                 ImagePath = model.ImagePath
             };
@@ -101,7 +119,7 @@ namespace VATUClothesShop.Repository
             var editProduct = vATUShopDbContext.Products.Find(model.ProductId);
             editProduct.ProductName = model.ProductName;
             editProduct.CategoryId = model.CategoryId;
-            editProduct.BrandingId = model.BrandingId;
+            editProduct.BrandId = model.BrandingId;
             editProduct.Price = model.Price;
             editProduct.Inventory = model.Inventory;
             editProduct.Description = model.Description;
@@ -126,6 +144,18 @@ namespace VATUClothesShop.Repository
             }
             vATUShopDbContext.SaveChanges();
             return editProduct;
+        }
+
+        public bool Delete(int Id)
+        {
+            var delProduct = vATUShopDbContext.Products.Find(Id);
+            if (delProduct != null)
+            {
+                delProduct.IsDelete = true;
+               var result = vATUShopDbContext.SaveChanges() > 0;
+                return result;
+            }
+            return false;
         }
     }
 }

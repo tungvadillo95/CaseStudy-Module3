@@ -150,7 +150,7 @@ namespace VATUClothesShop.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("VATUClothesShop.Models.AccountCustomer", b =>
+            modelBuilder.Entity("VATUClothesShop.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -159,8 +159,9 @@ namespace VATUClothesShop.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -172,6 +173,11 @@ namespace VATUClothesShop.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -234,6 +240,9 @@ namespace VATUClothesShop.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
                     b.HasKey("BrandId");
 
                     b.ToTable("Brands");
@@ -251,6 +260,9 @@ namespace VATUClothesShop.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
@@ -263,10 +275,7 @@ namespace VATUClothesShop.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("AccountCustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AccountCustomerId1")
+                    b.Property<string>("AccountCustomerId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("DateCreated")
@@ -275,7 +284,31 @@ namespace VATUClothesShop.Migrations
                     b.Property<DateTime>("DateShip")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsNormalOrder")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NormalOrderAddress")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("NormalOrderCustomerName")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("NormalOrderPhone")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
                     b.Property<int>("PaymentRef")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<bool>("Status")
@@ -283,7 +316,7 @@ namespace VATUClothesShop.Migrations
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("AccountCustomerId1");
+                    b.HasIndex("AccountCustomerId");
 
                     b.ToTable("Orders");
                 });
@@ -294,6 +327,9 @@ namespace VATUClothesShop.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -326,10 +362,7 @@ namespace VATUClothesShop.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BrandingId")
+                    b.Property<int>("BrandId")
                         .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
@@ -347,6 +380,9 @@ namespace VATUClothesShop.Migrations
 
                     b.Property<int>("Inventory")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<float>("Price")
                         .HasColumnType("real");
@@ -372,15 +408,15 @@ namespace VATUClothesShop.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("AccountCustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AccountCustomerId1")
+                    b.Property<string>("AccountCustomerId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.HasKey("ShoppingCartId");
 
-                    b.HasIndex("AccountCustomerId1");
+                    b.HasIndex("AccountCustomerId");
 
                     b.ToTable("ShoppingCarts");
                 });
@@ -391,6 +427,9 @@ namespace VATUClothesShop.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -424,7 +463,7 @@ namespace VATUClothesShop.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("VATUClothesShop.Models.AccountCustomer", null)
+                    b.HasOne("VATUClothesShop.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -433,7 +472,7 @@ namespace VATUClothesShop.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("VATUClothesShop.Models.AccountCustomer", null)
+                    b.HasOne("VATUClothesShop.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -448,7 +487,7 @@ namespace VATUClothesShop.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VATUClothesShop.Models.AccountCustomer", null)
+                    b.HasOne("VATUClothesShop.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -457,7 +496,7 @@ namespace VATUClothesShop.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("VATUClothesShop.Models.AccountCustomer", null)
+                    b.HasOne("VATUClothesShop.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -466,9 +505,9 @@ namespace VATUClothesShop.Migrations
 
             modelBuilder.Entity("VATUClothesShop.Models.Order", b =>
                 {
-                    b.HasOne("VATUClothesShop.Models.AccountCustomer", "AccountCustomer")
-                        .WithMany()
-                        .HasForeignKey("AccountCustomerId1");
+                    b.HasOne("VATUClothesShop.Models.ApplicationUser", "AccountCustomer")
+                        .WithMany("Orders")
+                        .HasForeignKey("AccountCustomerId");
 
                     b.Navigation("AccountCustomer");
                 });
@@ -496,7 +535,9 @@ namespace VATUClothesShop.Migrations
                 {
                     b.HasOne("VATUClothesShop.Models.Brand", "Brand")
                         .WithMany("Products")
-                        .HasForeignKey("BrandId");
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VATUClothesShop.Models.Category", "Category")
                         .WithMany("Products")
@@ -511,9 +552,9 @@ namespace VATUClothesShop.Migrations
 
             modelBuilder.Entity("VATUClothesShop.Models.ShoppingCart", b =>
                 {
-                    b.HasOne("VATUClothesShop.Models.AccountCustomer", "AccountCustomer")
+                    b.HasOne("VATUClothesShop.Models.ApplicationUser", "AccountCustomer")
                         .WithMany("ShoppingCarts")
-                        .HasForeignKey("AccountCustomerId1");
+                        .HasForeignKey("AccountCustomerId");
 
                     b.Navigation("AccountCustomer");
                 });
@@ -537,8 +578,10 @@ namespace VATUClothesShop.Migrations
                     b.Navigation("ShoppingCart");
                 });
 
-            modelBuilder.Entity("VATUClothesShop.Models.AccountCustomer", b =>
+            modelBuilder.Entity("VATUClothesShop.Models.ApplicationUser", b =>
                 {
+                    b.Navigation("Orders");
+
                     b.Navigation("ShoppingCarts");
                 });
 

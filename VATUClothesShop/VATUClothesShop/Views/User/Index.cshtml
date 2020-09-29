@@ -1,0 +1,37 @@
+﻿@model IEnumerable<UserViewModel>
+@{
+    ViewBag.Title = "User Management";
+}
+<h3>@ViewBag.Title</h3>
+<a asp-controller="User" asp-action="Create" class="btn btn-primary" style="width:auto;">+ Tạo tài khoản</a>
+<table class="table table-bordered table-hover mt-2">
+    <thead class="thead-dark">
+        <tr>
+            <th>Email</th>
+            <th>Điện thoại</th>
+            <th>Họ tên</th>
+            <th>Địa chỉ</th>
+            <th>Vai trò</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var user in Model)
+            {
+        <tr>
+            <td>@user.Email</td>
+            <td>@user.PhoneNumber</td>
+            <td>@user.FullName</td>
+            <td>@user.Address</td>
+            <td>@user.RolesName</td>
+            <td>
+                <a asp-controller="User" asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-warning">Sửa</a>
+                <a asp-controller="User" asp-action="Delete" asp-route-id="@user.UserId" class="btn btn-danger">Xóa</a>
+            </td>
+        </tr>
+            }
+        }
+    </tbody>
+</table>

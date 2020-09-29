@@ -10,11 +10,12 @@ namespace VATUClothesShop.Repository
     public interface IProductRepository
     {
         int CreateProduct(Product product);
-        IEnumerable<Product> GetProducts();
-        DetailProductViewModel Get(int productId);
+        IEnumerable<DetailProductViewModel> GetProducts();
+        DetailProductViewModel GetProduct(int productId);
         Product ConvertProductViewModel(CreateProductViewModel model);
         EditProductViewModel ConvertEditProductViewModel(DetailProductViewModel model);
         Product EditProduct(EditProductViewModel model);
+        bool Delete(int Id);
     }
 }
 
